@@ -1,0 +1,4 @@
+com/github/chrispy/hateoasjx/common/HateoasJxException.class
+com/github/chrispy/hateoasjx/common/log/Log.class
+module-info.class
+com/github/chrispy/hateoasjx/common/concurrent/SingletonSupplier.class

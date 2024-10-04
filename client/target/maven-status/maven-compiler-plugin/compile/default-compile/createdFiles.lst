@@ -1,0 +1,14 @@
+com/github/chrispy/hateoasjx/client/internal/SimpleResponse.class
+com/github/chrispy/hateoasjx/client/HateoasJxClient.class
+com/github/chrispy/hateoasjx/client/type/GenericType$SingleParameterizedType.class
+com/github/chrispy/hateoasjx/client/type/GenericType.class
+com/github/chrispy/hateoasjx/client/proxy/HateoasJxInitializer.class
+com/github/chrispy/hateoasjx/client/HateoasJxResponse.class
+com/github/chrispy/hateoasjx/client/HateoasProxy.class
+module-info.class
+com/github/chrispy/hateoasjx/client/RequestExecutor.class
+com/github/chrispy/hateoasjx/client/proxy/HateoasJxInitializer$1.class
+com/github/chrispy/hateoasjx/client/internal/ClassEntityType.class
+com/github/chrispy/hateoasjx/client/proxy/HateoasJxProxy.class
+com/github/chrispy/hateoasjx/client/type/EntityType.class
+com/github/chrispy/hateoasjx/client/type/GenericType$KnownGenericType.class
