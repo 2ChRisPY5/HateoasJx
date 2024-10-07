@@ -1,4 +1,0 @@
---patch-module
-hateoasjx.common=_
---add-reads
-hateoasjx.common=ALL-UNNAMED
