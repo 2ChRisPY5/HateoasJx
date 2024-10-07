@@ -18,6 +18,7 @@ import org.junit.Test;
 import com.github.chrispy.app.Basic;
 import com.github.chrispy.app.Human;
 import com.github.chrispy.app.MoreThen10;
+import com.github.chrispy.app.Nested;
 import com.github.chrispy.app.Parents;
 import com.github.chrispy.hateoasjx.api.HateoasJxResolvable;
 import com.github.chrispy.hateoasjx.api.Linkable;
@@ -126,6 +127,19 @@ public class EnhanceMojoTest
 			Map.of(
 				"id", "0",
 				"name", "Müller"));
+	}
+
+	/**
+	 * Test expression chain
+	 */
+	@Test
+	public void testGetterChain() throws Exception
+	{
+		final var self = new SelfConfig("/@real.deep.id", "real.deep.flag");
+		final var nested = loadEntity(Nested.class.getName(), HateoasJxResolvable.class);
+
+		assertResolver(nested, self, List.of(), Map.of("real.deep.id", "1",
+			"real.deep.flag", "true"));
 	}
 
 	/**

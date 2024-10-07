@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import com.github.chrispy.hateoasjx.client.HateoasProxy;
 import com.github.chrispy.hateoasjx.maven.plugin.ClassNode;
 import com.github.chrispy.hateoasjx.maven.plugin.enhancements.BasicEnhancement;
+import com.github.chrispy.hateoasjx.maven.plugin.util.ExpressionTranslator;
 import com.github.chrispy.hateoasjx.maven.plugin.util.JavassistUtil;
 
 import javassist.CtNewMethod;
@@ -36,20 +37,17 @@ class Identifier extends BasicEnhancement
 	{
 		final var ctClass = node.getCtClass();
 		final var anchor = getProxyAnchor(node).orElseThrow();
-
-		// get field and type
-		final var field = JavassistUtil.getField(ctClass, anchor);
-		final var fieldType = JavassistUtil.getFieldType(field);
+		final var getter = ExpressionTranslator.toGetterChain(ctClass, anchor);
 
 		// just return the string
 		final String statement;
-		if(String.class.getName().equals(fieldType.getName()))
+		if(String.class.getName().equals(getter.resultType().getName()))
 		{
-			statement = "$0." + anchor;
+			statement = getter.expression();
 		}
 		else
 		{
-			statement = "java.lang.String.valueOf($0." + anchor + ')';
+			statement = "java.lang.String.valueOf(" + getter.expression() + ')';
 		}
 
 		JavassistUtil.compile(() -> ctClass.addMethod(CtNewMethod.make(BODY.formatted(statement), ctClass)),

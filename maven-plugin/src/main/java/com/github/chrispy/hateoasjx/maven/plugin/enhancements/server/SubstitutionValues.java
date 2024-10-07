@@ -11,6 +11,8 @@ import com.github.chrispy.hateoasjx.api.Related;
 import com.github.chrispy.hateoasjx.maven.plugin.ClassNode;
 import com.github.chrispy.hateoasjx.maven.plugin.enhancements.BasicEnhancement;
 import com.github.chrispy.hateoasjx.maven.plugin.enhancements.ProcessInformation;
+import com.github.chrispy.hateoasjx.maven.plugin.util.ExpressionTranslator;
+import com.github.chrispy.hateoasjx.maven.plugin.util.ExpressionTranslator.GetterChain;
 import com.github.chrispy.hateoasjx.maven.plugin.util.JavassistUtil;
 
 import javassist.CtField;
@@ -23,7 +25,7 @@ import javassist.Modifier;
 class SubstitutionValues extends BasicEnhancement
 {
 	private static final String METHOD_NAME = "$$_hjx_substitutions";
-	private static final Pattern REPLACEMENTS = Pattern.compile("@(\\w+)");
+	private static final Pattern REPLACEMENTS = Pattern.compile("@(\\w+(\\.\\w+)*)");
 
 	/**
 	 * Constructor
@@ -101,7 +103,8 @@ class SubstitutionValues extends BasicEnhancement
 		// get from linkable
 		final var fromLinkable = ServerChain.getLinkable(node)
 			.stream()
-			.flatMap(l -> Stream.concat(Stream.of(l.identifiedBy()), getVariables(l.path())));
+			.flatMap(l -> Stream.concat(Stream.of(l.identifiedBy()), getVariables(l.path())))
+			.toList();
 
 		// get from related
 		final var fromRelated = Stream.of(node.getCtClass().getDeclaredFields())
@@ -113,9 +116,9 @@ class SubstitutionValues extends BasicEnhancement
 
 		// get the fields and build the statements from them
 		final var ctClass = node.getCtClass();
-		return Stream.concat(fromLinkable, fromRelated)
+		return Stream.concat(fromLinkable.stream(), fromRelated)
 			.distinct()
-			.map(f -> JavassistUtil.getField(ctClass, f))
+			.map(ex -> ExpressionTranslator.toGetterChain(ctClass, ex))
 			.map(SubstitutionValues::getStatement)
 			.toList();
 	}
@@ -126,22 +129,22 @@ class SubstitutionValues extends BasicEnhancement
 	 * @param body the body
 	 * @param field the {@link CtField}
 	 */
-	private static String getStatement(final CtField field)
+	private static String getStatement(final GetterChain getter)
 	{
 		// add key
 		final var stmt = new StringBuilder();
-		stmt.append('"').append(field.getName()).append("\",");
+		stmt.append('"').append(getter.expression()).append("\",");
 
 		// add value
-		if(JavassistUtil.getFieldType(field).isPrimitive())
+		if(getter.resultType().isPrimitive())
 		{
-			stmt.append("java.lang.String.valueOf($0.")
-				.append(field.getName())
+			stmt.append("java.lang.String.valueOf(")
+				.append(getter.statement())
 				.append(')');
 		}
 		else
 		{
-			stmt.append("$0.").append(field.getName());
+			stmt.append(getter.statement());
 		}
 
 		return stmt.toString();

@@ -19,7 +19,7 @@ public @interface Linkable
 	/**
 	 * Set the relative URL for the resource this entity belongs to. You can also use parameters by using
 	 * {@code @} as a prefix. The name must match a field name and will be replaced by its' stringyfied
-	 * value. <b>Nested field expressions are currently not supported!</b> Query parameters can also be used.
+	 * value. Query parameters can also be used.
 	 * <h4>Example</h4>
 	 * 
 	 * <pre>
